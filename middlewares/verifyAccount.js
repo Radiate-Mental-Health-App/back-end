@@ -1,0 +1,49 @@
+// check duplication for email
+// check if roles in the request is legal or not
+
+const db = require("../models");
+const ROLES = db.ROLES;
+const User = db.user;
+const Psychologist = db.psychologist;
+const Admin = db.admin;
+
+checkDuplicateEmail = async (req, res, next) => {
+  try {
+    const accountModel = [User, Psychologist, Admin];
+
+    // check for duplicate email
+    for (const Account of accountModel) {
+      const emailAccount = await Account.findOne({ email: req.body.email }).exec();
+      if (emailAccount) {
+        return res.status(400).send({ message: `Failed to Register: Email is already in use!` });
+      }
+    }
+
+    // if email is not in use for any account, continue to the next middleware
+    next();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Internal Server Error" });
+  }
+};
+
+checkRoleExisted = (req, res, next) => {
+  if (req.body.roles) {
+    for (let i = 0; i < req.body.roles.length; i++) {
+      if (!ROLES.includes(req.body.roles[i])) {
+        res.status(400).send({
+          message: `Failed! Role ${req.body.roles[i]} does not exist!`,
+        });
+        return;
+      }
+    }
+  }
+  next();
+};
+
+const verifyAccount = {
+  checkDuplicateEmail,
+  checkRoleExisted,
+};
+
+module.exports = verifyAccount;
