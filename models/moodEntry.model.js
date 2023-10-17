@@ -11,7 +11,16 @@ const moodEntrySchema = new mongoose.Schema({
   },
   activities: [String],
   moodNote: String,
-  date: Date,
+  date: {
+    type: Date,
+    default: Date.now, // Set the default value to the current date and time
+  },
+});
+
+moodEntrySchema.method("toJSON", function () {
+  const { __v, _id, ...object } = this.toObject();
+  object.id = _id;
+  return object;
 });
 
 const MoodEntry = mongoose.model("MoodEntry", moodEntrySchema);
