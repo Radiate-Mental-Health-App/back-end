@@ -48,10 +48,10 @@ const isAdmin = async (req, res, next) => {
       return res.status(404).send({ message: "Admin not found." });
     }
 
-    const role = await Role.find({ _id: { $in: admin.roles } }).exec();
+    const role = await Role.find({ _id: { $in: admin.role } }).exec();
 
     let isAdminRole = false;
-    console.log("Admin Role:", admin.roles);
+    console.log("Admin Role:", admin.role);
     for (let i = 0; i < role.length; i++) {
       console.log("Role ID", role[i]._id);
       if (role[i].name === "admin") {
@@ -92,10 +92,10 @@ const isPsychologist = async (req, res, next) => {
       return res.status(404).send({ message: "Psychologist not found." });
     }
 
-    const role = await Role.find({ _id: { $in: psychologist.roles } }).exec();
+    const role = await Role.find({ _id: { $in: psychologist.role } }).exec();
 
     let isPsychologistRole = false;
-    console.log("Psychologist Role:", psychologist.roles);
+    console.log("Psychologist Role:", psychologist.role);
     for (let i = 0; i < role.length; i++) {
       console.log("Role ID:", role[i]._id);
       if (role[i].name === "psychologist") {

@@ -41,20 +41,10 @@ checkRoleExisted = (req, res, next) => {
     }
 
     if (!roleExist) {
-      res.status(400).send({
+      return res.status(400).send({
         message: `Failed! Role ${req.body.roles} does not exist!`,
       });
-      return;
     }
-
-    // for (let i = 0; i < req.body.roles.length; i++) {
-    //   if (!ROLES.includes(req.body.roles)) {
-    //     res.status(400).send({
-    //       message: `Failed! Role ${req.body.roles[i]} does not exist!`,
-    //     });
-    //     return;
-    //   }
-    // }
   }
   next();
 };
