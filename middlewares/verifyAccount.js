@@ -13,9 +13,13 @@ checkDuplicateEmail = async (req, res, next) => {
 
     // check for duplicate email
     for (const Account of accountModel) {
-      const emailAccount = await Account.findOne({ email: req.body.email }).exec();
+      const emailAccount = await Account.findOne({
+        email: req.body.email,
+      }).exec();
       if (emailAccount) {
-        return res.status(400).send({ message: `Failed to Register: Email is already in use!` });
+        return res
+          .status(400)
+          .send({ message: `Failed to Register: Email is already in use!` });
       }
     }
 
@@ -29,13 +33,17 @@ checkDuplicateEmail = async (req, res, next) => {
 
 checkRoleExisted = (req, res, next) => {
   if (req.body.roles) {
-    for (let i = 0; i < req.body.roles.length; i++) {
-      if (!ROLES.includes(req.body.roles[i])) {
-        res.status(400).send({
-          message: `Failed! Role ${req.body.roles[i]} does not exist!`,
-        });
-        return;
+    let roleExist = null;
+    for (let i = 0; i < ROLES.length; i++) {
+      if (ROLES[i] == req.body.roles) {
+        roleExist = true;
       }
+    }
+
+    if (!roleExist) {
+      return res.status(400).send({
+        message: `Failed! Role ${req.body.roles} does not exist!`,
+      });
     }
   }
   next();

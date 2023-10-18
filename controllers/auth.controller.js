@@ -25,10 +25,9 @@ exports.signup = async (req, res) => {
     // Create an array to hold the account instances
     const accounts = [];
 
-    for (const role of roles) {
       let account;
 
-      switch (role) {
+      switch (roles) {
         case "user":
           account = new User({
             email: req.body.email,
@@ -53,17 +52,14 @@ exports.signup = async (req, res) => {
           return res.status(400).send({ message: "Invalid role specified" });
       }
 
-      // Save each account instance to the accounts array
-      await account.save();
       accounts.push(account);
-    }
 
     // Assign roles to each account
-    const userRoles = await Role.find({ name: { $in: roles } });
-    console.log("userRoles:", userRoles);
+    const accountRole = await Role.find({ name: { $in: roles } });
+    console.log("accountRole:", accountRole);
 
     for (let i = 0; i < accounts.length; i++) {
-      accounts[i].roles = [userRoles[i]._id];
+      accounts[i].role = [accountRole[i]._id];
       await accounts[i].save();
     }
 
@@ -81,9 +77,9 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   try {
     // Find the account by email in each role model
-    const userAccount = await User.findOne({ email: req.body.email }).populate("roles", "-__").exec();
-    const psychologistAccount = await Psychologist.findOne({ email: req.body.email }).populate("roles", "-__").exec();
-    const adminAccount = await Admin.findOne({ email: req.body.email }).populate("roles", "-__").exec();
+    const userAccount = await User.findOne({ email: req.body.email }).populate("role", "-__").exec();
+    const psychologistAccount = await Psychologist.findOne({ email: req.body.email }).populate("role", "-__").exec();
+    const adminAccount = await Admin.findOne({ email: req.body.email }).populate("role", "-__").exec();
 
     // Determine the role based on which account was found
     let account;
@@ -105,7 +101,7 @@ exports.signin = async (req, res) => {
     }
 
     // Get user roles
-    const authorities = account.roles.map((role) => "ROLE_" + role.name.toUpperCase());
+    const authorities = "ROLE_" + account.role.name.toUpperCase();
 
     // Generate a JWT token
     const token = JWT.sign({ id: account.id, roles: authorities }, config.secret, {
