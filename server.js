@@ -44,6 +44,7 @@ require("./routes/role.routes")(app);
 require("./routes/user/moodEntry.routes")(app);
 require("./routes/user/journalPrompt.routes")(app);
 require("./routes/user/journalEntry.routes")(app);
+require("./routes/course/course.routes")(app);
 
 // port, listen for requests
 const PORT = process.env.PORT || 5000;
