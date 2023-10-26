@@ -22,6 +22,7 @@ db.userCourseProgress = require("./userCourseProgress.model");
 db.post = require("./postCourse.model");
 db.comment = require("./commentCourse.model");
 db.category = require("./category.model");
+db.qna = require("./qna.model");
 
 db.ROLES = ["user", "psychologist", "admin"];
 
