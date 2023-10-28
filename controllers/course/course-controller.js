@@ -21,7 +21,7 @@ exports.createCourse = async (req, res) => {
   }
 };
 
-// update article
+// update Course
 exports.updateCourse = async (req, res) => {
   if (!req.body) {
     return res
@@ -38,7 +38,7 @@ exports.updateCourse = async (req, res) => {
 
     if (!data) {
       return res.status(404).send({
-        message: `Cannot update article with id=${id}. Maybe Course was not found`,
+        message: `Cannot update Course with id=${id}. Maybe Course was not found`,
       });
     }
 
