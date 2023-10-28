@@ -1,24 +1,40 @@
 module.exports = (app) => {
-  const course = require("../../controllers/course/post-controller.js");
+  const coursePost = require("../../controllers/course/post-controller.js");
   // const image = require("../../controllers/course/image-controller.js");
   const comment = require("../../controllers/course/comment-controller.js");
+  const course = require("../../controllers/course/comment-controller.js");
 
   let router = require("express").Router();
 
   // Create a artikel of course
-  router.post("/createpost/", course.createPost);
+  router.post("/createpost/", coursePost.createPost);
 
   // update artikel
-  router.put("/updatepost/:id", course.updatePost);
+  router.put("/updatepost/:id", coursePost.updatePost);
 
   // delete artikel
-  router.delete("/deletepost/:id", course.deletePost);
+  router.delete("/deletepost/:id", coursePost.deletePost);
 
   // get one artikel by course
-  router.get("/post/:id", course.getPost);
+  router.get("/post/:id", coursePost.getPost);
 
   // get all artikel by course
-  router.get("/posts/", course.getAllPosts);
+  router.get("/posts/", coursePost.getAllPosts);
+
+  // Create a course
+  router.post("/createcourse/", course.createcourse);
+
+  // update course
+  router.put("/updatecourse/:id", course.updatecourse);
+
+  // delete course
+  router.delete("/deletecourse/:id", course.deletecourse);
+
+  // get one  course
+  router.get("/getcourse/:id", course.getcourse);
+
+  // get all course
+  router.get("/getAllcourses/", course.getAllcourses);
 
   // Create a image of artikel course
   // router.post("/course/post/file/upload", image.uploadImage);
