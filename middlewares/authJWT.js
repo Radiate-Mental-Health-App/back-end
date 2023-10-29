@@ -26,6 +26,10 @@ verifyToken = (req, res, next) => {
       id: decoded.id,
       roles: decoded.roles, // Include roles in the req.user object
     };
+    
+    const decodedToken = JWT.decode(token);
+    req.decoded = decodedToken;
+
     next();
   });
 };

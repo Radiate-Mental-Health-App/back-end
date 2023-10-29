@@ -39,12 +39,15 @@ db.mongoose
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Radiate: mental health app!" });
 });
+require("./routes/account.routes")(app);
 require("./routes/auth.routes")(app);
 require("./routes/role.routes")(app);
 require("./routes/user/moodEntry.routes")(app);
 require("./routes/user/journalPrompt.routes")(app);
 require("./routes/user/journalEntry.routes")(app);
 require("./routes/course/course.routes")(app);
+require("./routes/psychologist/schedule.routes")(app);
+require("./routes/psychologist/appointment.routes")(app);
 
 // port, listen for requests
 const PORT = process.env.PORT || 5000;
