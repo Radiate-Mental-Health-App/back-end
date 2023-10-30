@@ -9,7 +9,7 @@ const db = require("./models");
 const Role = db.role;
 
 var consOption = {
-  origin: "http://localhost:8001",
+  origin: "*",
 };
 
 app.use(cors(consOption));
@@ -48,6 +48,7 @@ require("./routes/user/journalEntry.routes")(app);
 require("./routes/course/course.routes")(app);
 require("./routes/psychologist/schedule.routes")(app);
 require("./routes/psychologist/appointment.routes")(app);
+require("./routes/psychologist/counselingResult.routes")(app);
 
 // port, listen for requests
 const PORT = process.env.PORT || 5000;
