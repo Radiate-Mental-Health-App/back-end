@@ -46,6 +46,9 @@ require("./routes/user/journalPrompt.routes")(app);
 require("./routes/user/journalEntry.routes")(app);
 require("./routes/course/course.routes")(app);
 require("./routes/Qna/qna.routes")(app);
+require("./routes/psychologist/schedule.routes")(app);
+require("./routes/psychologist/appointment.routes")(app);
+
 
 // port, listen for requests
 const PORT = process.env.PORT || 5000;
