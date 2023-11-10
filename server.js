@@ -77,6 +77,7 @@ socketServer.on("connection", (ws) => {
     }
   }
 
+
   ws.on("message", (message) => {
     switch (JSON.parse(message).type) {
       case "load":
