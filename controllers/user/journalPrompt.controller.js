@@ -9,11 +9,28 @@ exports.create = async (req, res) => {
 
   try {
     const data = await journalPrompt.save();
+
+    const user = req.user;
+
+    if (!user) {
+      return res.status(403).json({ message: "User not found." });
+    }
+
+    user.journalPrompts.push(data._id);
+    try {
+      await user.save();
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        success: false,
+        message: "An error occured while updating the user's journalPrompt field",
+      });
+    }
     res.status(201).json({ success: true, data });
   } catch (err) {
     res.status(500).json({
       success: false,
-      message: "An error occured while creating a new mood entry",
+      message: "An error occured while creating a new journal prompt",
     });
   }
 };

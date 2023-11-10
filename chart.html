@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-12">
+                <h1>LINE CHART</h1>
+                <canvas id="line"></canvas>
+            </div>
+            <div class="col-12">
+                <h1>BAR Chart</h1>
+                <canvas id="bar"></canvas>
+            </div>
+            <div class="col-12">
+                <h1>my Chart</h1>
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+                  
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+    
+    <script>
+        const webSocket = new WebSocket('ws://localhost:443')
+
+        // BAR CHART =====================================
+
+        const barChartData = {
+            labels: ['Terrible', 'Sad', 'Okay', 'Good', 'Wonderful'],
+            datasets: [
+            {
+                label: "mood count",
+                data: [22, 12, 6, 9, 12],
+                backgroundColor: ["rgba(255, 172, 49, 0.4)", "rgba(255, 172, 49, 0.5)", "rgba(255, 172, 49, 0.6)", "rgba(255, 172, 49, 0.7)", "rgba(255, 172, 49, 0.8)"],
+                borderColor: ["rgba(255, 172, 49, 1)", "rgba(255, 172, 49, 1)", "rgba(255, 172, 49, 1)", "rgba(255, 172, 49, 1)", "rgba(255, 172, 49, 1)", "rgba(255, 172, 49, 1)"],
+                borderWidth: 0,
+                images: [
+                "file:///G:/project/radiate/back-end/images/1%20terrible.png",
+                "file:///G:/project/radiate/back-end/images/2%20bad.png",
+                "file:///G:/project/radiate/back-end/images/3%20okay.png",
+                "file:///G:/project/radiate/back-end/images/4%20good.png",
+                "file:///G:/project/radiate/back-end/images/5%20wonderful.png",
+                ],
+            },
+            ],
+        }
+
+        // xScaleImage plugin
+        const xScaleImage = {
+            id: "xScaleImage",
+            afterDraw(chart) {
+              const { ctx, data, scales } = chart;
+              const yScale = scales['y'];
+              const xScale = scales['x'];
+
+              ctx.save();
+
+              data.datasets[0].images.forEach((image, index) => {
+                const label = new Image();
+                label.src = image;
+                const imageSize = 30;
+                const padding = 10;
+
+                const xPos = xScale.getPixelForValue(index);
+                const yPos = yScale.bottom + padding;
+
+                ctx.drawImage(label, xPos - imageSize / 2, yPos, imageSize, imageSize);
+              });
+
+              ctx.restore();
+            },
+        };
+
+        const barConfig = {
+            type: "bar",
+            data: barChartData,
+            options: {
+            scales: {
+                x: {
+                  afterFit: (context) => {
+                    context.height += 40;
+                  },
+                  ticks: {
+                      callback: (value, index, values) => {
+                      return "";
+                      },
+                  },
+                },
+                y: {
+                beginAtZero: true,
+                },
+            },
+            },
+            plugins: [xScaleImage],
+        }
+
+        // const barCtx = document.getElementById('bar')
+        // const barChart = new Chart(barCtx, barConfig)
+        const barChart = new Chart(document.getElementById("bar"), barConfig);
+
+        const moodMap = {
+            1: 'Terrible',
+            2: 'Sad',
+            3: 'Okay',
+            4: 'Good',
+            5: 'Wonderful'
+        }
+
+        const updateLineChart = (data) => {
+            let moodValueArray = []
+            let dateArray = []
+            data.map( row => {
+                moodValueArray.push(moodMap[row.moodValue])
+                dateArray.push(row.date)
+            })
+            lineChartData.labels = dateArray
+            lineChartData.datasets[0].data = moodValueArray
+            lineChartData.datasets[0].backgroundColor = 'lightcoral'
+            lineChartData.datasets[0].borderColor = 'lightcoral'
+            lineChart.update()
+        }
+
+        // const updateBarChart = (data) => {
+        //     let moodValueArray = [];
+        //     let dateArray = [];
+        //     data.map((row) => {
+        //         moodValueArray.push(moodMap[row.moodValue]);
+        //         dateArray.push(row.date);
+        //     });
+        //     barChartData.labels = dateArray;
+        //     barChartData.datasets[0].data = moodValueArray;
+        //     barChartData.datasets[0].backgroundColor = 'skyblue';
+        //     barChartData.datasets[0].borderColor = 'skyblue';
+        //     barChart.update();
+        // }
+
+        // MY CHART ===================================================
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange', 'Pink'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3, 5, 2, 3, 20],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(239, 207, 227, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                    ]
+                }]
+            }
+        })
+
+        // LINE CHART =====================================
+
+        const lineChartData = {
+    labels: ["Sept 9", "Sept 10", "Sept 11", "Sept 12", "Sept 13", "Sept 14", "Sept 15", "Sept 16"],
+    datasets: [
+        {
+            label: "Data",
+            data: [1, 5, 3, 4, 2, 4, 3, 4],
+            images: [
+                "file:///G:/project/radiate/back-end/images/1%20terrible.png",
+                "file:///G:/project/radiate/back-end/images/2%20bad.png",
+                "file:///G:/project/radiate/back-end/images/3%20okay.png",
+                "file:///G:/project/radiate/back-end/images/4%20good.png",
+                "file:///G:/project/radiate/back-end/images/5%20wonderful.png",
+            ],
+        },
+    ],
+};
+
+const imageItems = {
+    id: 'imageItems',
+    beforeDatasetsDraw(chart, args, pluginOptions) {
+        const { ctx, data, options, scales: { x, y } } = chart;
+
+        ctx.save();
+        const imageSize = options.layout.padding.left;
+
+        data.datasets[0].images.forEach((imageLink, index) => {
+            const logo = new Image();
+            logo.src = imageLink;
+            ctx.drawImage(logo, x.getPixelForValue(0) - imageSize / 2, y.getPixelForValue(index) - imageSize / 2, imageSize, imageSize)
+        });
+        ctx.restore(); // Restore the canvas context
+    }
+};
+
+const lineConfig = {
+    type: 'line', // Corrected to 'line'
+    data: lineChartData,
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+            },
+        },
+        plugins: [imageItems],
+    },
+};
+
+const lineCtx = document.getElementById('line');
+const lineChart = new Chart(lineCtx, lineConfig);
+
+
+        webSocket.addEventListener('open', () => {
+            const message = {
+                type: 'load'
+            }
+            webSocket.send(JSON.stringify(message))
+            console.log('connected')
+        })
+
+        webSocket.onmessage = event => {
+            console.log(JSON.parse(event.data))
+            const data = JSON.parse(event.data)
+            updateLineChart(data)
+            updateBarChart(data)
+        }
+    </script>
+</body>
+</html></html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mood Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <canvas id="line"></canvas>
+    <script>
+      const socket = new WebSocket("ws://localhost:443");
+      socket.addEventListener("open", () => {
+        const message = {
+          type: "load",
+        };
+        socket.send(JSON.stringify(message));
+        console.log("connected");
+      });
+
+      const labels = [];
+      const data = [];
+
+      const config = {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Mood Entries",
+              data: data,
+              borderColor: "lightcoral",
+              backgroundColor: "lightcoral",
+              borderWidth: 4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "top",
+            },
+            title: {
+              display: true,
+              text: "Mood Chart",
+            },
+          },
+        },
+      };
+
+      const ctx = document.getElementById("line").getContext("2d");
+      const chart = new Chart(ctx, config);
+
+      socket.onmessage = (event) => {
+        const moodEntries = JSON.parse(event.data);
+        moodEntries.forEach((entry) => {
+          labels.push(entry.date);
+          data.push(entry.moodValue);
+        });
+        chart.update();
+      };
+    </script>
+  </body>
+</html> -->
