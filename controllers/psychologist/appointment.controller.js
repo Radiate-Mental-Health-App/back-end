@@ -50,7 +50,7 @@ const job = schedule.scheduleJob("*/60 * * * * *", async function () {
   }
 });
 // Memulai penjadwalan
-job;
+// job;
 
 // Create and save a new appointment
 exports.create = async (req, res) => {

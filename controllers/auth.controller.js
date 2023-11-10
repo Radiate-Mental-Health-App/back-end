@@ -114,7 +114,7 @@ exports.signin = async (req, res) => {
     res.status(200).send({
       id: account._id,
       email: account.email,
-      roles: authorities,
+      roles: account.role.name,
       accessToken: token,
     });
   } catch (err) {
