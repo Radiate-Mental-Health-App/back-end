@@ -19,6 +19,10 @@ db.selfAssessmentResult = require("./selfAssessmentResult.model");
 db.selfAssessmentType = require("./selfAssessmentType.model");
 db.user = require("./user.model");
 db.userCourseProgress = require("./userCourseProgress.model");
+db.post = require("./postCourse.model");
+db.comment = require("./commentCourse.model");
+db.category = require("./category.model");
+db.qna = require("./qna.model");
 
 db.ROLES = ["user", "psychologist", "admin"];
 

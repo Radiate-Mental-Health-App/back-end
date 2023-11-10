@@ -8,8 +8,14 @@ const db = require("./models");
 const MoodEntry = require("./models/moodEntry.model");
 const Role = db.role;
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+var consOption = {
+  origin: "*",
+};
+
 
 // CORS configuration
 const corsOptions = {
@@ -41,15 +47,18 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Radiate: mental health app!" });
 });
 
-app.get("/chart", (req, res) => {
-  res.sendFile("chart.html", { root: __dirname });
-});
+require("./routes/account.routes")(app);
 
 require("./routes/auth.routes")(app);
 require("./routes/role.routes")(app);
 require("./routes/user/moodEntry.routes")(app);
 require("./routes/user/journalPrompt.routes")(app);
 require("./routes/user/journalEntry.routes")(app);
+require("./routes/course/course.routes")(app);
+require("./routes/Qna/qna.routes")(app);
+require("./routes/psychologist/schedule.routes")(app);
+require("./routes/psychologist/appointment.routes")(app);
+require("./routes/psychologist/counselingResult.routes")(app);
 
 // WebSocket server
 const socketServer = new WebSocketServer({ port: 443 });

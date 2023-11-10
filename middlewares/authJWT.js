@@ -23,6 +23,25 @@ const verifyToken = (req, res, next) => {
       roles: decoded.roles, // Include roles in the req.user object
     };
 
+    
+    const decodedToken = JWT.decode(token);
+    req.decoded = decodedToken;
+
+    next();
+  });
+};
+
+const isAdmin = async (req, res, next) => {
+  try {
+    const token = req.headers["x-access-token"];
+    const decodedToken = JWT.decode(token);
+    req.decoded = decodedToken;
+
+    console.log("Decoded Token: ", req.decoded);
+    console.log("Admin Middleware - Checking Access");
+    console.log("Decoded Token:", decodedToken);
+
+
     // Based on the user's role, conditionally populate moodEntries
     if (req.user.roles === "ROLE_USER") {
       req.user = await db.user.findById(req.user.id).populate("moodEntries", "journalPrompts").exec();

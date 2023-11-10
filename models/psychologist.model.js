@@ -68,6 +68,10 @@ const psychologistSchema = new mongoose.Schema({
   certificates: {
     type: [String],
   },
+  isActive: {
+    required: true,
+    type: Boolean
+  }
 });
 
 const Psychologist = mongoose.model("Psychologist", psychologistSchema);
