@@ -8,7 +8,7 @@ module.exports = function (app) {
   });
 
   app.get("/api/all", controller.allAccess);
-  app.get("/api/user", [authJWT.verifyToken], controller.userBoard);
+  app.get("/api/user", [authJWT.verifyToken, authJWT.isUser], controller.userBoard);
   app.get("/api/admin", [authJWT.verifyToken, authJWT.isAdmin], controller.adminBoard);
   app.get("/api/psychologist", [authJWT.verifyToken, authJWT.isPsychologist], controller.psychologistBoard);
 };
