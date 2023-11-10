@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema({
   cityOfResidence: String,
   cityOrDistrict: String,
   whatsappNo: String,
+  journalPrompts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "JournalPrompt", // Reference to the JournalPrompt model
+    },
+  ],
   journalEntries: [
     {
       type: mongoose.Schema.Types.ObjectId,

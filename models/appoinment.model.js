@@ -11,7 +11,7 @@ const appointmentSchema = new mongoose.Schema({
     required: true,
     ref: "User", // Reference to the User collection
   },
-  schedule: {
+  scheduleId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "Schedule", // Reference to the Schedule collection

@@ -11,9 +11,27 @@ exports.create = async (req, res) => {
 
   try {
     const data = await journalEntry.save();
+
     // Fetch the created journal entry with populated journalPrompt
     const createdEntry = await JournalEntry.findById(data._id).populate("journalPrompt");
 
+    const user = req.user;
+
+    if (!user) {
+      return res.status(403).json({ message: "User not found" });
+    }
+
+    user.journalEntries.push(data._id);
+
+    try {
+      await user.save();
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        success: false,
+        message: "An error occured while updating the user's journalEntries field",
+      });
+    }
     res.status(201).json({ success: true, data: createdEntry });
   } catch (err) {
     res.status(500).json({

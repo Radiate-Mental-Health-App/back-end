@@ -13,7 +13,7 @@ const moodEntrySchema = new mongoose.Schema({
   moodNote: String,
   date: {
     type: Date,
-    default: Date.now, // Set the default value to the current date and time
+    default: Date.now,
   },
 });
 
