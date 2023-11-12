@@ -1,13 +1,14 @@
 module.exports = (app) => {
+  const { authJWT } = require("../../middlewares");
   const moodEntries = require("../../controllers/user/moodEntry.controller");
 
   let router = require("express").Router();
 
   // Create a new mood entry
-  router.post("/", moodEntries.create);
+  router.post("/", authJWT.verifyToken, moodEntries.create);
 
   // Find all mood entries
-  router.get("/", moodEntries.findAll);
+  router.get("/", authJWT.verifyToken, moodEntries.findAll);
 
   // Find mood entry by id
   router.get("/:id", moodEntries.findOne);
@@ -16,7 +17,7 @@ module.exports = (app) => {
   router.put("/:id", moodEntries.update);
 
   // Delete mood entry by id
-  router.delete("/:id", moodEntries.delete);
+  router.delete("/:id", authJWT.verifyToken, moodEntries.delete);
 
   app.use("/api/user/moodentries", router);
 };

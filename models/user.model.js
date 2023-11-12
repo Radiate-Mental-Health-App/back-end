@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
   },
   dateOfBirth: Date,
   cityOfResidence: String,
-  cityOrDistrict: String,
+  cityOfDistrict: String,
   whatsappNo: String,
   journalEntries: [
     {
