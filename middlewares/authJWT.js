@@ -23,7 +23,6 @@ const verifyToken = (req, res, next) => {
       roles: decoded.roles, // Include roles in the req.user object
     };
 
-    
     const decodedToken = JWT.decode(token);
     req.decoded = decodedToken;
 
@@ -41,14 +40,23 @@ const isAdmin = async (req, res, next) => {
     console.log("Admin Middleware - Checking Access");
     console.log("Decoded Token:", decodedToken);
 
-
     // Based on the user's role, conditionally populate moodEntries
     if (req.user.roles === "ROLE_USER") {
-      req.user = await db.user.findById(req.user.id).populate("moodEntries", "journalPrompts").exec();
+      req.user = await db.user
+        .findById(req.user.id)
+        .populate("moodEntries", "journalPrompts")
+        .exec();
     }
 
     next();
-  });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .send({
+        message: `An error occurred while checking ${roleName} status.`,
+      });
+  }
 };
 
 const checkRole = (roleName) => {
@@ -71,7 +79,11 @@ const checkRole = (roleName) => {
       }
     } catch (err) {
       console.log(err);
-      res.status(500).send({ message: `An error occurred while checking ${roleName} status.` });
+      res
+        .status(500)
+        .send({
+          message: `An error occurred while checking ${roleName} status.`,
+        });
     }
   };
 };

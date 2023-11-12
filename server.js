@@ -61,31 +61,31 @@ require("./routes/psychologist/appointment.routes")(app);
 require("./routes/psychologist/counselingResult.routes")(app);
 
 // WebSocket server
-const socketServer = new WebSocketServer({ port: 443 });
+// const socketServer = new WebSocketServer({ port: 443 });
 
-socketServer.on("connection", (ws) => {
-  console.log("New client connected");
+// socketServer.on("connection", (ws) => {
+//   console.log("New client connected");
 
-  async function getMoodEntries() {
-    try {
-      const data = await MoodEntry.find({});
-      socketServer.clients.forEach((client) => {
-        client.send(JSON.stringify(data));
-      });
-    } catch (err) {
-      console.error("Error fetching mood entries", err);
-    }
-  }
+//   async function getMoodEntries() {
+//     try {
+//       const data = await MoodEntry.find({});
+//       socketServer.clients.forEach((client) => {
+//         client.send(JSON.stringify(data));
+//       });
+//     } catch (err) {
+//       console.error("Error fetching mood entries", err);
+//     }
+//   }
 
 
-  ws.on("message", (message) => {
-    switch (JSON.parse(message).type) {
-      case "load":
-        getMoodEntries();
-        break;
-    }
-  });
-});
+//   ws.on("message", (message) => {
+//     switch (JSON.parse(message).type) {
+//       case "load":
+//         getMoodEntries();
+//         break;
+//     }
+//   });
+// });
 
 // Initialize a collection of roles for role-based access control
 async function initial() {

@@ -22,19 +22,19 @@ module.exports = (app) => {
   router.get("/posts/", coursePost.getAllPosts);
 
   // Create a course
-  router.post("/createcourse/", course.createcourse);
+  // router.post("/createcourse/", course.createcourse);
 
   // update course
-  router.put("/updatecourse/:id", course.updatecourse);
+  // router.put("/updatecourse/:id", course.updatecourse);
 
   // delete course
-  router.delete("/deletecourse/:id", course.deletecourse);
+  // router.delete("/deletecourse/:id", course.deletecourse);
 
   // get one  course
-  router.get("/getcourse/:id", course.getcourse);
+  // router.get("/getcourse/:id", course.getcourse);
 
   // get all course
-  router.get("/getAllcourses/", course.getAllcourses);
+  // router.get("/getAllcourses/", course.getAllcourses);
 
   // Create a image of artikel course
   // router.post("/course/post/file/upload", image.uploadImage);
