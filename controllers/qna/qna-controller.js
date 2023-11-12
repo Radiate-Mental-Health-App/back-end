@@ -4,8 +4,8 @@ const Qna = db.qna;
 // create qna of article
 exports.addqna = async (req, res) => {
   const qna = new Qna({
-    pertanyaan: req.body.pertanyaan,
-    response: req.body.response,
+    Questions: req.body.Questions,
+    Answers: req.body.Answers,
   });
 
   try {
