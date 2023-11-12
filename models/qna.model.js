@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const qnaSchema = new mongoose.Schema(
   {
-    pertanyaan: String,
-    response: String,
+    Questions: String,
+    Answers: String,
   },
   {
     timestamps: true,

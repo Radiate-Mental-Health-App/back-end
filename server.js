@@ -1,62 +1,93 @@
 const express = require("express");
 const cors = require("cors");
+const mongoose = require("mongoose");
+const { WebSocketServer } = require("ws");
 
 const dbConfig = require("./config/db.config");
+const db = require("./models");
+const MoodEntry = require("./models/moodEntry.model");
+const Role = db.role;
+
 
 const app = express();
-
-const db = require("./models");
-const Role = db.role;
+const PORT = process.env.PORT || 5000;
 
 var consOption = {
   origin: "*",
 };
 
-app.use(cors(consOption));
 
-// parse request of content-type - application/json
+// CORS configuration
+const corsOptions = {
+  origin: "*",
+};
+app.use(cors(corsOptions));
+
+// Body parsers
 app.use(express.json());
-
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-// initialize mongoose
-db.mongoose
+// MongoDB connection
+mongoose
   .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Successfully connect to MongoDB");
+    console.log("Successfully connected to MongoDB");
     initial();
   })
   .catch((err) => {
     console.log("Connection error", err);
-    process.exit();
+    process.exit(1);
   });
 
-// route
+// Routes
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Radiate: mental health app!" });
 });
+
 require("./routes/account.routes")(app);
+
 require("./routes/auth.routes")(app);
 require("./routes/role.routes")(app);
 require("./routes/user/moodEntry.routes")(app);
 require("./routes/user/journalPrompt.routes")(app);
 require("./routes/user/journalEntry.routes")(app);
 require("./routes/course/course.routes")(app);
+require("./routes/Qna/qna.routes")(app);
 require("./routes/psychologist/schedule.routes")(app);
 require("./routes/psychologist/appointment.routes")(app);
 require("./routes/psychologist/counselingResult.routes")(app);
 
-// port, listen for requests
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+// WebSocket server
+const socketServer = new WebSocketServer({ port: 443 });
+
+socketServer.on("connection", (ws) => {
+  console.log("New client connected");
+
+  async function getMoodEntries() {
+    try {
+      const data = await MoodEntry.find({});
+      socketServer.clients.forEach((client) => {
+        client.send(JSON.stringify(data));
+      });
+    } catch (err) {
+      console.error("Error fetching mood entries", err);
+    }
+  }
+
+
+  ws.on("message", (message) => {
+    switch (JSON.parse(message).type) {
+      case "load":
+        getMoodEntries();
+        break;
+    }
+  });
 });
 
-// initialize a collection of roles, role-based access control
+// Initialize a collection of roles for role-based access control
 async function initial() {
   try {
     const count = await Role.collection.estimatedDocumentCount();
@@ -87,3 +118,8 @@ async function initial() {
     console.log("Error: ", err);
   }
 }
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});

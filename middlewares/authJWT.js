@@ -1,31 +1,28 @@
-// check if token is provided, legal or not
-// check if roles of the account contains required role or not
-
 const JWT = require("jsonwebtoken");
 const config = require("../config/auth.config");
 const db = require("../models");
-const Admin = db.admin;
-const Psychologist = db.psychologist;
 const Role = db.role;
 
-verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
     return res.status(403).send({ message: "No token provided!" });
   }
 
-  JWT.verify(token, config.secret, (err, decoded) => {
+  JWT.verify(token, config.secret, async (err, decoded) => {
     if (err) {
-      return res.status(401).send({
-        message: "Unauthorized!",
-      });
+      console.log("Token Verification Failed");
+      console.error(err);
+      return res.status(401).send({ message: "Unauthorized!" });
     }
+
     // Set the user information in req.user, including roles
     req.user = {
       id: decoded.id,
       roles: decoded.roles, // Include roles in the req.user object
     };
+
     
     const decodedToken = JWT.decode(token);
     req.decoded = decodedToken;
@@ -44,88 +41,46 @@ const isAdmin = async (req, res, next) => {
     console.log("Admin Middleware - Checking Access");
     console.log("Decoded Token:", decodedToken);
 
-    const admin = await Admin.findById(decodedToken.id).exec();
 
-    console.log("Admin: ", admin);
-
-    if (!admin) {
-      return res.status(404).send({ message: "Admin not found." });
+    // Based on the user's role, conditionally populate moodEntries
+    if (req.user.roles === "ROLE_USER") {
+      req.user = await db.user.findById(req.user.id).populate("moodEntries", "journalPrompts").exec();
     }
 
-    const role = await Role.find({ _id: { $in: admin.role } }).exec();
-
-    let isAdminRole = false;
-    console.log("Admin Role:", admin.role);
-    for (let i = 0; i < role.length; i++) {
-      console.log("Role ID", role[i]._id);
-      if (role[i].name === "admin") {
-        isAdminRole = true;
-        break;
-      }
-    }
-
-    console.log("Role from DB", role);
-    console.log("Is Admin Role:", isAdminRole);
-
-    if (isAdminRole) {
-      next();
-    } else {
-      res.status(403).send({ message: "Require Admin Role!" });
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({ message: err.message || "An error occurred while checking admin status." });
-  }
+    next();
+  });
 };
 
-const isPsychologist = async (req, res, next) => {
-  try {
-    const token = req.headers["x-access-token"];
-    const decodedToken = JWT.decode(token);
-    req.decoded = decodedToken; // Set the decoded token in req.decoded
+const checkRole = (roleName) => {
+  return async (req, res, next) => {
+    try {
+      const token = req.headers["x-access-token"];
+      const decodedToken = JWT.decode(token);
+      const user = await db[roleName].findById(decodedToken.id).exec();
 
-    console.log("Decoded Token:", req.decoded); // Log the decoded token for inspection
-    console.log("Psychologist Middleware - Checking Access");
-    console.log("Decoded Token:", decodedToken);
-
-    const psychologist = await Psychologist.findById(decodedToken.id).exec();
-
-    console.log("Psychologist:", psychologist);
-
-    if (!psychologist) {
-      return res.status(404).send({ message: "Psychologist not found." });
-    }
-
-    const role = await Role.find({ _id: { $in: psychologist.role } }).exec();
-
-    let isPsychologistRole = false;
-    console.log("Psychologist Role:", psychologist.role);
-    for (let i = 0; i < role.length; i++) {
-      console.log("Role ID:", role[i]._id);
-      if (role[i].name === "psychologist") {
-        isPsychologistRole = true;
-        break;
+      if (!user) {
+        return res.status(404).send({ message: `${roleName} not found.` });
       }
-    }
 
-    console.log("Roles from DB:", role);
-    console.log("Is Psychologist Role:", isPsychologistRole);
+      const roles = await Role.find({ _id: { $in: user.role } }).exec();
 
-    if (isPsychologistRole) {
-      next();
-    } else {
-      res.status(403).send({ message: "Require Psychologist Role!" });
+      if (roles.some((role) => role.name === roleName.toLowerCase())) {
+        next();
+      } else {
+        res.status(403).send({ message: `Require ${roleName} Role!` });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({ message: `An error occurred while checking ${roleName} status.` });
     }
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({ message: err.message || "An error occurred while checking psychologist status." });
-  }
+  };
 };
 
 const authJWT = {
   verifyToken,
-  isAdmin,
-  isPsychologist,
+  isAdmin: checkRole("admin"),
+  isPsychologist: checkRole("psychologist"),
+  isUser: checkRole("user"),
 };
 
 module.exports = authJWT;

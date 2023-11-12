@@ -1,7 +1,7 @@
 const { body, validationResult } = require("express-validator");
 
 const validateMoodEntry = [
-  body("moodValue").isIn(["Terrible", "Sad", "Okay", "Good", "Wonderful"]).withMessage("Invalid mood value"),
+  body("moodValue").isIn(["Terrible", "Sad", "Okay", "Good", "Wonderful"]).withMessage(" mood value"),
   body("social").isArray().withMessage("Social must be an array"),
   body("activities").isArray().withMessage("Activities must be an array"),
   body("moodNote").isString().withMessage("Mood note must be a string"),
