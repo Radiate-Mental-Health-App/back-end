@@ -1,3 +1,4 @@
+module.exports = (app) => {
 const moodEntries = require("../../controllers/user/moodEntry.controller");
 const { authJWT } = require("../../middlewares");
 

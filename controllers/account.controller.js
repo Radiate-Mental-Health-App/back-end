@@ -96,6 +96,62 @@ exports.findOneUser = async (req, res) => {
   }
 };
 
+// update psychologist
+exports.updatePsychologist = async (req, res) => {
+  if (!req.body) {
+    return res
+      .status(400)
+      .send({ message: "Data to update can not be empty!" });
+  }
+
+  const id = req.params.id;
+
+  try {
+    const psychologist = await Psychologist.findByIdAndUpdate(id, req.body, {
+      useFindAndModify: false,
+    });
+
+    if (!psychologist) {
+      return res.status(404).send({
+        message: `Cannot update psychologist with id=${id}`,
+      });
+    }
+
+    res.send({ message: "Psychologist was updated successfully." });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ message: "Error updating psychologist with id=" + id });
+  }
+};
+
+// update user
+exports.updateUser = async (req, res) => {
+  if (!req.body) {
+    return res
+      .status(400)
+      .send({ message: "Data to update can not be empty!" });
+  }
+
+  const id = req.params.id;
+
+  try {
+    const user = await User.findByIdAndUpdate(id, req.body, {
+      useFindAndModify: false,
+    });
+
+    if (!user) {
+      return res.status(404).send({
+        message: `Cannot update user with id=${id}`,
+      });
+    }
+
+    res.send({ message: "User was updated successfully." });
+  } catch (err) {
+    res.status(500).send({ message: "Error updating user with id=" + id });
+  }
+};
+
 // Delete psychologist by id
 exports.deletePsychologist = async (req, res) => {
   const id = req.params.id;

@@ -37,6 +37,12 @@ const appointmentSchema = new mongoose.Schema({
   paymentTime: {
     type: Date,
   },
+  userProblem: {
+    type: String
+  },
+  linkSession: {
+    type: String
+  }
 });
 
 const Appointment = mongoose.model("Appointment", appointmentSchema);

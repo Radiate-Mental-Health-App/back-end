@@ -5,52 +5,53 @@ const Schedule = db.schedule;
 const schedule = require("node-schedule");
 
 // // Buat aturan penjadwalan menggunakan node-schedule untuk mengupdate status appointment sesuai current time
-const job = schedule.scheduleJob("*/60 * * * * *", async function () {
-  // Ambil waktu real-time saat ini
-  const currentTime = new Date();
+function job() {
+  schedule.scheduleJob("*/60 * * * * *", async function () {
+    // Ambil waktu real-time saat ini
+    const currentTime = new Date();
 
-  // Cari appointment dengan status "Scheduled"
-  const appointments = await Appointment.find().populate("scheduleId");
+    // Cari appointment dengan status "Scheduled"
+    const appointments = await Appointment.find().populate("scheduleId");
+    // Loop melalui appointment yang ditemukan
+    for (const appointment of appointments) {
+      // Ambil waktu mulai dan waktu selesai dari timeslots
+      const startTime = new Date(appointment.scheduleId.timeSlots.startTime);
+      const endTime = new Date(appointment.scheduleId.timeSlots.endTime);
 
-  // Loop melalui appointment yang ditemukan
-  for (const appointment of appointments) {
-    // Ambil waktu mulai dan waktu selesai dari timeslots
-    const startTime = new Date(appointment.scheduleId.timeSlots.startTime);
-    const endTime = new Date(appointment.scheduleId.timeSlots.endTime);
-
-    // Periksa apakah waktu real-time saat ini berada dalam rentang timeslots
-    if (appointment.status == "Scheduled") {
-      if (currentTime >= startTime && currentTime <= endTime) {
-        // Ubah status appointment menjadi "In Progress"
-        appointment.status = "In Progress";
-        await appointment.save();
-        console.log(
-          `Status appointment ${appointment._id} diubah menjadi 'In Progress'`
-        );
+      // Periksa apakah waktu real-time saat ini berada dalam rentang timeslots
+      if (appointment.status == "Scheduled") {
+        if (currentTime >= startTime && currentTime <= endTime) {
+          // Ubah status appointment menjadi "In Progress"
+          appointment.status = "In Progress";
+          await appointment.save();
+          console.log(
+            `Status appointment ${appointment._id} diubah menjadi 'In Progress'`
+          );
+        }
+      } else if (appointment.status == "In Progress") {
+        if (currentTime >= endTime) {
+          appointment.status = "Completed";
+          await appointment.save();
+          console.log(
+            `Status appointment ${appointment._id} diubah menjadi 'Completed'`
+          );
+        }
+      } else if (appointment.status == "Waiting for Payment") {
+        if (currentTime >= startTime) {
+          appointment.status = "Expired";
+          await appointment.save();
+          console.log(
+            `Status appointment ${appointment._id} diubah menjadi 'Expired'`
+          );
+        }
+      } else {
+        console.log("tidak ada perubahan status appointment");
       }
-    } else if (appointment.status == "In Progress") {
-      if (currentTime >= endTime) {
-        appointment.status = "Completed";
-        await appointment.save();
-        console.log(
-          `Status appointment ${appointment._id} diubah menjadi 'Completed'`
-        );
-      }
-    } else if (appointment.status == "Waiting for Payment") {
-      if (currentTime >= startTime) {
-        appointment.status = "Expired";
-        await appointment.save();
-        console.log(
-          `Status appointment ${appointment._id} diubah menjadi 'Expired'`
-        );
-      }
-    } else {
-      console.log("tidak ada perubahan status appointment");
     }
-  }
-});
+  });
+}
 // Memulai penjadwalan
-// job;
+// job();
 
 // Create and save a new appointment
 exports.create = async (req, res) => {
@@ -98,11 +99,11 @@ exports.findAll = async (req, res) => {
     if (req.decoded.roles == "ROLE_PSYCHOLOGIST") {
       appointments = await Appointment.find({
         psychologistId: req.decoded.id,
-      }).populate("scheduleId");
+      }).populate("scheduleId").populate("userId");
     } else if (req.decoded.roles == "ROLE_USER") {
       appointments = await Appointment.find({
         userId: req.decoded.id,
-      }).populate("scheduleId");
+      }).populate("scheduleId").populate("psychologistId");
     } else {
       appointments = await Appointment.find();
     }

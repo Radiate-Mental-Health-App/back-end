@@ -19,6 +19,9 @@ module.exports = (app) => {
     account.activatedPyschologist
   );
 
+  router.put("/user/:id", account.updateUser);
+  router.put("/psychologist/:id", account.updatePsychologist);
+
   // Delete account by id
   router.delete("/psychologist/:id", account.deletePsychologist);
   router.delete("/user/:id", account.deleteUser);
