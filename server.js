@@ -12,10 +12,6 @@ const Role = db.role;
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-var consOption = {
-  origin: "*",
-};
-
 
 // CORS configuration
 const corsOptions = {
