@@ -16,6 +16,8 @@ module.exports = (app) => {
   // Update appointment status by id
   router.patch("/:id", appointment.updateStatus);
 
+  router.put("/:id", appointment.updateLinkSession);
+
   // Delete appointment by id
   router.delete("/:id", appointment.delete);
 

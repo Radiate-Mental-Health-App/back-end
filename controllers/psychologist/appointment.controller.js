@@ -56,7 +56,7 @@ function job() {
 // Create and save a new appointment
 exports.create = async (req, res) => {
   const userId = req.decoded.id;
-  const { psychologistId, scheduleId, package, amount } = req.body;
+  const { psychologistId, scheduleId, package, amount, userProblem } = req.body;
 
   try {
     const schedule = await Schedule.findById(scheduleId);
@@ -74,9 +74,10 @@ exports.create = async (req, res) => {
         userId: userId,
         scheduleId: scheduleId,
         package: package,
-        status: "Waiting for Payment",
+        status: "Scheduled",
         amount: amount,
         orderTime: new Date().toLocaleString(),
+        userProblem: userProblem,
       });
 
       await newAppointment.save();
@@ -99,11 +100,15 @@ exports.findAll = async (req, res) => {
     if (req.decoded.roles == "ROLE_PSYCHOLOGIST") {
       appointments = await Appointment.find({
         psychologistId: req.decoded.id,
-      }).populate("scheduleId").populate("userId");
+      })
+        .populate("scheduleId")
+        .populate("userId");
     } else if (req.decoded.roles == "ROLE_USER") {
       appointments = await Appointment.find({
         userId: req.decoded.id,
-      }).populate("scheduleId").populate("psychologistId");
+      })
+        .populate("scheduleId")
+        .populate("psychologistId");
     } else {
       appointments = await Appointment.find();
     }
@@ -156,14 +161,6 @@ exports.updateStatus = async (req, res) => {
       { useFindAndModify: false }
     );
 
-    if (status == "Scheduled") {
-      await Appointment.findByIdAndUpdate(
-        id,
-        { paymentTime: new Date() },
-        { useFindAndModify: false }
-      );
-    }
-
     if (status == "Canceled") {
       await Schedule.findByIdAndUpdate(
         appointment.scheduleId,
@@ -185,6 +182,30 @@ exports.updateStatus = async (req, res) => {
       .send({ message: "Error updating appointment with id=" + id });
   }
 };
+
+exports.updateLinkSession = async(req, res) => {
+  const id = req.params.id;
+
+  try {
+    const appointment = await Appointment.findByIdAndUpdate(
+      id,
+      { linkSession: req.body.linkSession },
+      { useFindAndModify: false }
+    );
+
+    if (!appointment) {
+      return res.status(404).send({
+        message: `Cannot update appointment with id=${id}`,
+      });
+    }
+
+    res.send({ message: "Link session appointment was updated successfully." });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ message: "Error updating appointment with id=" + id });
+  }
+}
 
 // Delete appointment by id
 exports.delete = async (req, res) => {

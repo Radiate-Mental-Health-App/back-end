@@ -19,7 +19,7 @@ const appointmentSchema = new mongoose.Schema({
   package: {
     type: [String],
     required: true,
-    enum: ["Video Call", "Voice Call", "Chat Message"],
+    enum: ["Video Call", "Voice Call"],
   },
   status: {
     type: String,

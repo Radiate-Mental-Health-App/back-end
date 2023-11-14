@@ -68,7 +68,7 @@ const psychologistSchema = new mongoose.Schema({
   certificates: {
     type: [String],
   },
-  isActive: {
+  isVerified: {
     required: true,
     type: Boolean
   }

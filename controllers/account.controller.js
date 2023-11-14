@@ -198,7 +198,7 @@ exports.activatedPyschologist = async (req, res) => {
   try {
     const data = await Psychologist.findByIdAndUpdate(
       id,
-      { isActive: req.body.status },
+      { isVerified: req.body.status },
       { useFindAndModify: false }
     );
 
