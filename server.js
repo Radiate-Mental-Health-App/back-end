@@ -8,10 +8,8 @@ const db = require("./models");
 const MoodEntry = require("./models/moodEntry.model");
 const Role = db.role;
 
-
 const app = express();
 const PORT = process.env.PORT || 5000;
-
 
 // CORS configuration
 const corsOptions = {
@@ -25,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // MongoDB connection
 mongoose
-  .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
+  .connect(dbConfig.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -72,7 +70,6 @@ require("./routes/psychologist/counselingResult.routes")(app);
 //       console.error("Error fetching mood entries", err);
 //     }
 //   }
-
 
 //   ws.on("message", (message) => {
 //     switch (JSON.parse(message).type) {
