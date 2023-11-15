@@ -40,6 +40,7 @@ exports.signup = async (req, res) => {
             email: req.body.email,
             fullName: req.body.fullName,
             password: hashedPassword,
+            isVerified: false
           });
           break;
         case "admin":

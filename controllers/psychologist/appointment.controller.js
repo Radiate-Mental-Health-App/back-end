@@ -77,6 +77,7 @@ exports.create = async (req, res) => {
         status: "Scheduled",
         amount: amount,
         orderTime: new Date().toLocaleString(),
+        paymentTime: new Date().toLocaleString(), // karena mengikuti flow, jadinya payment time diinput pas create
         userProblem: userProblem,
       });
 
@@ -134,7 +135,10 @@ exports.findAll = async (req, res) => {
 exports.findOne = async (req, res) => {
   try {
     const id = req.params.id;
-    const appointment = await Appointment.findById(id);
+    const appointment = await Appointment.findById(id)
+      .populate("scheduleId")
+      .populate("userId")
+      .populate("psychologistId");
 
     if (!appointment) {
       return res
@@ -183,7 +187,7 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
-exports.updateLinkSession = async(req, res) => {
+exports.updateLinkSession = async (req, res) => {
   const id = req.params.id;
 
   try {
@@ -205,7 +209,7 @@ exports.updateLinkSession = async(req, res) => {
       .status(500)
       .send({ message: "Error updating appointment with id=" + id });
   }
-}
+};
 
 // Delete appointment by id
 exports.delete = async (req, res) => {
