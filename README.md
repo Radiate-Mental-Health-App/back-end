@@ -72,7 +72,7 @@ Radiate has 3 roles that consist of user, psychologist, and admin. Every role ha
 
 ---
 
-## Installation Steps
+## 🛠️ Installation Steps
 1. Clone the Repository
 Clone the backend repository using Git:
     ```
