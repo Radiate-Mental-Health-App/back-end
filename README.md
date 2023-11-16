@@ -116,7 +116,8 @@ Make sure you have the following installed on your machine:
 ##  🗃️ Database Schema
 MongoDB is utilized to store data (document).
 ![db-schema](https://hackmd.io/_uploads/HyQfr2yEa.png)
-![user role database schema-Page-2](https://github.com/Radiate-Mental-Health-App/back-end/assets/39270680/23040e4c-a207-403b-b473-bc7421ac5514)
+![user role database schema-Page-2 (1)](https://github.com/Radiate-Mental-Health-App/back-end/assets/39270680/d90aec57-62af-496f-b6d4-4ed7ca1434df)
+
 
 
 The models include:
