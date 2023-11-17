@@ -24,7 +24,6 @@ const psychologistSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ["Female", "Male"],
   },
   cityOfResidence: {
     type: String,
@@ -39,7 +38,6 @@ const psychologistSchema = new mongoose.Schema({
     type: [String],
   },
   languagesMastered: {
-    enum: ["Bahasa", "English"],
   },
   levelOfEducation: {
     type: String,
@@ -54,10 +52,8 @@ const psychologistSchema = new mongoose.Schema({
     type: Number,
   },
   expertiseFields: {
-    enum: ["Career & Human Resources", "Relationship Conflict", "Mood and Emotion"],
   },
   counselingMethod: {
-    enum: ["Video Call", "Voice Call", "Chat Message"],
   },
   cv: {
     type: String,

@@ -29,7 +29,6 @@ const counselingResultSchema = new mongoose.Schema({
     required: true,
   },
   problems: {
-    enum: ["Career & Human Resources", "Relationship Conflict", "Mood and Emotion"],
   },
   solutionAndAssignment: {
     type: String,

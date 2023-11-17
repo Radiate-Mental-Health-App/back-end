@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
   photo: String,
   gender: {
     type: String,
-    enum: ["Female", "Male"],
   },
   dateOfBirth: Date,
   cityOfResidence: String,

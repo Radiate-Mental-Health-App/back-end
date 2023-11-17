@@ -19,12 +19,10 @@ const appointmentSchema = new mongoose.Schema({
   package: {
     type: [String],
     required: true,
-    enum: ["Video Call", "Voice Call"],
   },
   status: {
     type: String,
     required: true,
-    enum: ["Waiting for Payment", "Scheduled", "In Progress", "Completed", "Expired", "Canceled"],
   },
   amount: {
     type: Number,
